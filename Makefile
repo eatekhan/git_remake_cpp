@@ -1,6 +1,6 @@
 
 TARGET = eit
-SRCS = main.cpp workspace.cpp
+SRCS = main.cpp workspace.cpp -lgcrypt
 all:
 	g++ $(SRCS) -o $(TARGET)
 

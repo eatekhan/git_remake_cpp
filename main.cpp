@@ -35,7 +35,7 @@ int main(int argc, char* argv[])
     {
         fs::path absolutePath = fs::absolute(fs::current_path());
         fs::path gitPath = absolutePath / ".git";
-        fs::path databasePath = absolutePath / ".objects";
+        fs::path databasePath = gitPath / "objects";
 
         EitWorkspace workspace = EitWorkspace(absolutePath);
         Database database = Database(databasePath);
