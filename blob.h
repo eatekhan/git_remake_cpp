@@ -4,12 +4,14 @@ using namespace std;
 class Blob{
     private:
         
-        string objectType;
+        
     public:
         string fileContent;
         string objectId;
-        Blob(string fileContent){
+        string type;
+        Blob(string &fileContent){
             this->fileContent = fileContent;
-            this->objectType = "Blob";
+            this->type = "Blob";
         }
+        string to_string(){ return this->fileContent;}
 };

@@ -3,6 +3,16 @@
 #include <filesystem>
 #include "workspace.h"
 #include "database.h"
+#include "tree.h"
+#include <chrono>
+#include <cstdlib>
+#include "author.h"
+#include "commit.h"
+long long getCurrentTimestamp() {
+    auto now = std::chrono::system_clock::now();
+    auto duration = now.time_since_epoch();
+    return std::chrono::duration_cast<std::chrono::seconds>(duration).count();
+}
 
 using namespace std;
 namespace fs = filesystem;
@@ -40,15 +50,33 @@ int main(int argc, char* argv[])
         EitWorkspace workspace = EitWorkspace(absolutePath);
         Database database = Database(databasePath);
 
+        vector<Entry> entries;
         for(auto const& dir_entries: workspace.getFiles())
         {
             string fileContent = workspace.readFileContent(dir_entries.path().string());
             Blob blob(fileContent);
-    
             database.store(blob);
             
+            entries.push_back(Entry(dir_entries.path().filename().string(), blob.objectId));
         }
+        Tree tree(entries);
+        database.store(tree);
         
+
+        const char* name = std::getenv("GIT_AUTHOR_NAME");
+        const char* email = std::getenv("GIT_AUTHOR_EMAIL");
+
+        long long ts = std::chrono::duration_cast<std::chrono::seconds>(
+                       std::chrono::system_clock::now().time_since_epoch())
+                       .count();
+        
+        Author author(name, email, ts);
+        string message = "";
+        // cin >> message;
+        // cout << author.to_string() << endl;
+        Commit commit(tree, author, message);
+        database.store(commit);
+
     }
     return 0;
 }

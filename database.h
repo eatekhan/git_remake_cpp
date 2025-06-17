@@ -24,23 +24,22 @@ class Database{
             return oss.str();
         }
 
-        bool writeObject(Blob &blob, string &contentFormat){
-            filesystem::path dir = this->path / blob.objectId.substr(0, 2);
-            string objectName = blob.objectId.substr(2, 38);
+        template<typename T>
+        bool writeObject(T &obj, string &contentFormat){
+            filesystem::path dir = this->path / obj.objectId.substr(0, 2);
+            string objectName = obj.objectId.substr(2, 38);
 
             if (!filesystem::exists(dir)){
                 filesystem::create_directory(dir);
-
-                return false;
             }
             ofstream file(dir / objectName, ios::binary);
             if (!file){
                 cerr << "Failed to create file" << objectName << endl;
                 return false;
             }
-            cout << dir << endl;
+            // cout << dir << endl;
             file << contentFormat;
-            cout << contentFormat;
+            // cout << contentFormat;
             file.close();
             return true;
         }
@@ -50,11 +49,12 @@ class Database{
         Database(filesystem::path path){
             this->path = path;   
         }
-        bool store(Blob &blob){
-            string contentFormat = "#blob" + to_string(blob.fileContent.size()) + string(1, '\0') + blob.fileContent;
-            blob.objectId = sha1(contentFormat);
-            writeObject(blob, contentFormat);
 
+        template<typename T>
+        bool store(T &obj){
+            string contentFormat = obj.type +" "+ to_string(obj.to_string().size()) + string(1, '\0') + obj.to_string();
+            obj.objectId = sha1(contentFormat);
+            writeObject(obj, contentFormat);
             return true;
         }
         
