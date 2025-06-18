@@ -26,3 +26,9 @@ string EitWorkspace::readFileContent(string filePath){
     ss << file.rdbuf();
     return ss.str();
 }
+
+
+Entry::Entry (const string fileName, const string objectId){
+        this->fileName = fileName;
+        this->objectId = objectId;
+    }
