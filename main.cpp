@@ -8,6 +8,8 @@
 #include <cstdlib>
 #include "author.h"
 #include "commit.h"
+#include "blob.h"
+#include "refs.h"
 long long getCurrentTimestamp() {
     auto now = std::chrono::system_clock::now();
     auto duration = now.time_since_epoch();
@@ -47,8 +49,10 @@ int main(int argc, char* argv[])
         fs::path gitPath = absolutePath / ".git";
         fs::path databasePath = gitPath / "objects";
 
+
         EitWorkspace workspace = EitWorkspace(absolutePath);
         Database database = Database(databasePath);
+        Refs refs = Refs(gitPath);
 
         vector<Entry> entries;
         for(auto const& dir_entries: workspace.getFiles())
@@ -71,11 +75,31 @@ int main(int argc, char* argv[])
                        .count();
         
         Author author(name, email, ts);
-        string message = "";
-        // cin >> message;
-        // cout << author.to_string() << endl;
-        Commit commit(tree, author, message);
+        
+
+        string message;
+        getline(cin, message);
+        
+        string parent = refs.get_head();
+        
+        Commit commit(tree, author, message, parent);
         database.store(commit);
+        
+        ofstream file(gitPath/"HEAD");
+        file << commit.objectId;
+
+
+        string first_line;
+        stringstream ss(message);
+        getline(ss, first_line);
+
+        string is_root = "";
+        if (parent == "") {is_root = "(root-commit) "; }
+        cout << is_root << commit.objectId << " " << first_line << endl;
+
+
+
+
 
     }
     return 0;

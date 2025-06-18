@@ -3,7 +3,7 @@
 #include <vector>
 #include "workspace.h"
 using namespace std;
-
+#include <algorithm> 
 
 class Tree{
     private:
@@ -14,10 +14,11 @@ class Tree{
         string mode;
         string type;
         string objectId;
-        Tree(vector<Entry> entries){
-            this->entries = entries;
-            this->mode = "100644";
-            this->type = "Tree";
-        }
-        string to_string() const {}
+
+        Tree(std::vector<Entry> new_entries):entries(std::move(new_entries)), type("tree"), mode("100644") {
+        std::sort(entries.begin(), entries.end(), [](const Entry& a, const Entry& b) {
+        return a.fileName < b.fileName;
+    });
+}
+        string to_string() const;
 };

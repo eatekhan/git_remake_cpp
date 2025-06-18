@@ -1,3 +1,4 @@
+#pragma  once
 #include <filesystem>
 using namespace std;
 
@@ -11,7 +12,7 @@ class Blob{
         string type;
         Blob(string &fileContent){
             this->fileContent = fileContent;
-            this->type = "Blob";
+            this->type = "blob";
         }
         string to_string(){ return this->fileContent;}
 };

@@ -9,7 +9,7 @@ class Entry{
     public:
         string fileName;
         string objectId;
-        Entry (const string fileName, const string objectId){}
+        Entry (const string fileName, const string objectId);
 };
 class EitWorkspace{
     private:
